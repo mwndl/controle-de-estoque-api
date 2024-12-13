@@ -3,8 +3,6 @@ package com.datamatch.controle_estoque.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -12,8 +10,6 @@ import java.util.List;
 @Data
 public class Subtipo {
 
-    @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,4 +26,15 @@ public class Subtipo {
     @JsonIgnore
     private List<Produto> produtos;
 
+    private Boolean generico = false;
+
+    // Método para definir nome e descricao como null caso generico seja true
+    @PrePersist
+    @PreUpdate
+    public void checkGenerico() {
+        if (Boolean.TRUE.equals(this.generico)) {
+            this.nome = null;
+            this.descricao = null;
+        }
+    }
 }

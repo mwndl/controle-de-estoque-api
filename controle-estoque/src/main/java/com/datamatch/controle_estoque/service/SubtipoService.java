@@ -28,6 +28,21 @@ public class SubtipoService {
             throw new RuntimeException("Tipo inválido ou não encontrado");
         }
 
+        // Verificar se já existe um subtipo generico para o tipo
+        if (Boolean.TRUE.equals(subtipo.getGenerico())) {
+            // Verifica se já existe algum subtipo para o tipo (não importa se é generico ou não)
+            boolean existeOutroSubtipo = subtipoRepository.existsByTipo(subtipo.getTipo());
+            if (existeOutroSubtipo) {
+                throw new RuntimeException("Não é possível criar um subtipo 'generico' quando já existe outro subtipo para este tipo.");
+            }
+
+            // Verifica se já existe um subtipo generico para o tipo
+            boolean existeGenerico = subtipoRepository.existsByTipoAndGenericoTrue(subtipo.getTipo());
+            if (existeGenerico) {
+                throw new RuntimeException("Já existe um subtipo 'generico' para esse tipo.");
+            }
+        }
+
         return subtipoRepository.save(subtipo);
     }
 
