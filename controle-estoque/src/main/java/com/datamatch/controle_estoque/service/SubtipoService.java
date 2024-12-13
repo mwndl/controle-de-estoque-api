@@ -24,41 +24,53 @@ public class SubtipoService {
 
     // Método para salvar um subtipo, associando-o a um tipo
     public Subtipo salvarSubtipo(Subtipo subtipo) {
-
-        // Verifica se o tipo existe e carrega o tipo sem carregar subtipos (evitar recursão)
         Tipo tipo = tipoService.buscarTipoPorId(subtipo.getTipo().getId());
-        System.out.println("Tipo encontrado: " + tipo);
-        if (tipo == null || tipo.getNome() == null || tipo.getNome().isEmpty()) {
-            throw new RuntimeException("O tipo associado não possui um nome válido");
+        if (tipo == null) {
+            throw new RuntimeException("O tipo associado não existe.");
         }
 
-        // Verificar se já existe um subtipo generico para o tipo
         if (Boolean.TRUE.equals(subtipo.getGenerico())) {
-            // Verifica se já existe algum subtipo para o tipo (não importa se é generico ou não)
-            boolean existeOutroSubtipo = subtipoRepository.existsByTipo(subtipo.getTipo());
-            if (existeOutroSubtipo) {
-                throw new RuntimeException("Não é possível criar um subtipo 'generico' quando já existe outro subtipo para este tipo.");
-            }
-
-            // Verifica se já existe um subtipo generico para o tipo
             boolean existeGenerico = subtipoRepository.existsByTipoAndGenericoTrue(subtipo.getTipo());
             if (existeGenerico) {
                 throw new RuntimeException("Já existe um subtipo 'generico' para esse tipo.");
             }
-
-            // Preencher o nome do subtipo com o nome do tipo se for generico
-            subtipo.setNome(tipo.getNome()); // Nome do subtipo será o nome do tipo
-            subtipo.setDescricao(null); // Definindo descricao como null quando generico
+            subtipo.setNome(tipo.getNome());
+            subtipo.setDescricao(null);
         }
 
-        // Salvar o subtipo
         return subtipoRepository.save(subtipo);
     }
-
-
 
     // Método para buscar subtipo por ID
     public Subtipo buscarSubtipoPorId(Long id) {
         return subtipoRepository.findById(id).orElse(null);
+    }
+
+    // Método para atualizar um subtipo existente
+    public Subtipo atualizarSubtipo(Long id, Subtipo subtipoAtualizado) {
+        Subtipo subtipoExistente = subtipoRepository.findById(id).orElse(null);
+        if (subtipoExistente == null) {
+            throw new RuntimeException("Subtipo não encontrado com o ID fornecido.");
+        }
+
+        Tipo tipo = tipoService.buscarTipoPorId(subtipoAtualizado.getTipo().getId());
+        if (tipo == null) {
+            throw new RuntimeException("O tipo associado não existe.");
+        }
+
+        subtipoExistente.setNome(subtipoAtualizado.getNome());
+        subtipoExistente.setDescricao(subtipoAtualizado.getDescricao());
+        subtipoExistente.setTipo(tipo);
+        subtipoExistente.setGenerico(subtipoAtualizado.getGenerico());
+
+        return subtipoRepository.save(subtipoExistente);
+    }
+
+    // Método para excluir um subtipo
+    public void excluirSubtipo(Long id) {
+        if (!subtipoRepository.existsById(id)) {
+            throw new RuntimeException("Subtipo não encontrado com o ID fornecido.");
+        }
+        subtipoRepository.deleteById(id);
     }
 }

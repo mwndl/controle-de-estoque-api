@@ -1,3 +1,4 @@
+// CONTROLLER:
 package com.datamatch.controle_estoque.controller;
 
 import com.datamatch.controle_estoque.model.Subtipo;
@@ -32,5 +33,17 @@ public class SubtipoController {
     @GetMapping("/{id}")
     public Subtipo buscarSubtipoPorId(@PathVariable Long id) {
         return subtipoService.buscarSubtipoPorId(id);
+    }
+
+    // Endpoint para atualizar um subtipo existente
+    @PutMapping("/{id}")
+    public Subtipo atualizarSubtipo(@PathVariable Long id, @RequestBody Subtipo subtipoAtualizado) {
+        return subtipoService.atualizarSubtipo(id, subtipoAtualizado);
+    }
+
+    // Endpoint para excluir um subtipo
+    @DeleteMapping("/{id}")
+    public void excluirSubtipo(@PathVariable Long id) {
+        subtipoService.excluirSubtipo(id);
     }
 }
