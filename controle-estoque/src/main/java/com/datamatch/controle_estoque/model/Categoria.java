@@ -2,18 +2,14 @@ package com.datamatch.controle_estoque.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Data
-public class Subtipo {
+public class Categoria {
 
-    @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,12 +18,9 @@ public class Subtipo {
 
     private String descricao;
 
-    @ManyToOne
-    @JoinColumn(name = "id_tipo")
-    private Tipo tipo;
-
-    @OneToMany(mappedBy = "subtipo")
+    @OneToMany(mappedBy = "categoria")
     @JsonIgnore
-    private List<Produto> produtos;
+    private List<Tipo> tipos;
 
+    // Getters and Setters (podem ser omitidos com Lombok, se preferir)
 }

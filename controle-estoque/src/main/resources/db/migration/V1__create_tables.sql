@@ -1,10 +1,20 @@
 -- V1__create_tables.sql
-CREATE TABLE tipos (
+CREATE TABLE categorias (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255),
     descricao TEXT,
     data_criacao DATETIME,
     data_atualizacao DATETIME
+);
+
+CREATE TABLE tipos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_categoria BIGINT,
+    nome VARCHAR(255),
+    descricao TEXT,
+    data_criacao DATETIME,
+    data_atualizacao DATETIME
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id)
 );
 
 CREATE TABLE subtipos (

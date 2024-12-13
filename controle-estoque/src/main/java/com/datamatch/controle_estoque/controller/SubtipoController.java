@@ -2,11 +2,13 @@ package com.datamatch.controle_estoque.controller;
 
 import com.datamatch.controle_estoque.model.Subtipo;
 import com.datamatch.controle_estoque.service.SubtipoService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Subtipos", description = "Endpoints relacionados aos subtipos de produtos (ex.: Cerveja, Refrigerante, Maçã)")
 @RestController
 @RequestMapping("/api/subtipos")
 public class SubtipoController {
