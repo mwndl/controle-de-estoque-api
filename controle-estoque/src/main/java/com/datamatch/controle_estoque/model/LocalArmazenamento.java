@@ -1,13 +1,11 @@
 package com.datamatch.controle_estoque.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "local_armazenamento")
 public class LocalArmazenamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

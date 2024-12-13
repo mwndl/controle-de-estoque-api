@@ -1,6 +1,7 @@
 package com.datamatch.controle_estoque.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(name = "categoria")
 public class Categoria {
 
     @Id
@@ -19,8 +21,10 @@ public class Categoria {
     private String descricao;
 
     @OneToMany(mappedBy = "categoria")
-    @JsonIgnore
+    @JsonManagedReference  // A relação com Tipo é gerida aqui
     private List<Tipo> tipos;
 
-    // Getters and Setters (podem ser omitidos com Lombok, se preferir)
+
 }
+
+

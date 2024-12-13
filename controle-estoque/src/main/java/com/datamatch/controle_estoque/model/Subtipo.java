@@ -1,5 +1,6 @@
 package com.datamatch.controle_estoque.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(name = "subtipo")
 public class Subtipo {
 
     @Id
@@ -28,13 +30,23 @@ public class Subtipo {
 
     private Boolean generico = false;
 
-    // Método para definir nome e descricao como null caso generico seja true
-    @PrePersist
+    // Método que será chamado antes de realizar o update
     @PreUpdate
-    public void checkGenerico() {
-        if (Boolean.TRUE.equals(this.generico)) {
+    public void preUpdate() {
+        // Se for necessário, limpe nome e descricao antes de atualizar no banco
+        if (this.generico != null && this.generico) {
             this.nome = null;
             this.descricao = null;
         }
     }
+
+    @Override
+    public String toString() {
+        // Representação simples, sem a recursão infinita
+        return "Subtipo{id=" + id + ", nome=" + nome + ", tipo=" + (tipo != null ? tipo.getNome() : "n/d") + ", generico=" + generico + "}";
+    }
+
 }
+
+
+

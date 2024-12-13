@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Entity
 @Data
+@Table(name = "estoque")
 public class Estoque {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

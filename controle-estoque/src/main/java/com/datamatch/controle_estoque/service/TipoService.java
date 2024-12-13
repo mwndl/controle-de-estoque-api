@@ -24,9 +24,9 @@ public class TipoService {
 
     // Método para buscar tipo por ID
     public Tipo buscarTipoPorId(Long id) {
-        Optional<Tipo> tipo = tipoRepository.findById(id);
-        return tipo.orElse(null);
+        return tipoRepository.findById(id).orElse(null);
     }
+
 
     // Método para salvar um tipo
     public Tipo salvarTipo(Tipo tipo) {
