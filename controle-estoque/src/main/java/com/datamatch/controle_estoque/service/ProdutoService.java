@@ -2,8 +2,8 @@ package com.datamatch.controle_estoque.service;
 
 import com.datamatch.controle_estoque.model.Produto;
 import com.datamatch.controle_estoque.repository.ProdutoRepository;
-import com.datamatch.controle_estoque.model.Subtipo;
 import com.datamatch.controle_estoque.repository.SubtipoRepository;
+import com.datamatch.controle_estoque.repository.MarcaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +18,9 @@ public class ProdutoService {
 
     @Autowired
     private SubtipoRepository subtipoRepository;
+
+    @Autowired
+    private MarcaRepository marcaRepository;
 
     // Método para listar todos os produtos
     public List<Produto> listarProdutos() {
@@ -35,6 +38,11 @@ public class ProdutoService {
         // Verifica se o subtipo é válido
         if (produto.getSubtipo() == null || produto.getSubtipo().getId() == null || subtipoRepository.findById(produto.getSubtipo().getId()).isEmpty()) {
             throw new RuntimeException("Subtipo inválido ou não encontrado");
+        }
+
+        // Verifica se a marca é válida
+        if (produto.getMarca() == null || produto.getMarca().getId() == null || marcaRepository.findById(produto.getMarca().getId()).isEmpty()) {
+            throw new RuntimeException("Marca inválida ou não encontrada");
         }
 
         return produtoRepository.save(produto);
