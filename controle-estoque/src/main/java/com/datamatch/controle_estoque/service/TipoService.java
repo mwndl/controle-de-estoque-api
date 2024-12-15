@@ -2,9 +2,11 @@ package com.datamatch.controle_estoque.service;
 
 import com.datamatch.controle_estoque.dto.TipoDTO;
 import com.datamatch.controle_estoque.dto.TipoResponseDTO;
+import com.datamatch.controle_estoque.exception.custom.CustomException;
 import com.datamatch.controle_estoque.model.Categoria;
 import com.datamatch.controle_estoque.model.Tipo;
 import com.datamatch.controle_estoque.repository.TipoRepository;
+import com.datamatch.controle_estoque.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class TipoService {
 
     // Método para buscar tipo por ID
     public Tipo buscarTipoPorId(Long id) {
-        return tipoRepository.findById(id).orElseThrow(() -> new RuntimeException("Tipo não encontrado."));
+        return tipoRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.TYPE_NOT_FOUND)); // Usando erro específico
     }
 
     // Método para salvar um tipo
@@ -39,7 +41,7 @@ public class TipoService {
     // Método para atualizar um tipo
     public Tipo atualizarTipo(Long id, Tipo tipo) {
         if (!tipoRepository.existsById(id)) {
-            throw new RuntimeException("Tipo não encontrado para atualização.");
+            throw new CustomException(ErrorCode.TYPE_NOT_FOUND); // Erro específico
         }
         validarCategoria(tipo.getCategoria());
         tipo.setId(id); // Certifique-se de que o ID está correto
@@ -49,7 +51,7 @@ public class TipoService {
     // Método para excluir um tipo
     public void excluirTipo(Long id) {
         if (!tipoRepository.existsById(id)) {
-            throw new RuntimeException("Tipo não encontrado para exclusão.");
+            throw new CustomException(ErrorCode.TYPE_NOT_FOUND); // Erro específico
         }
         tipoRepository.deleteById(id);
     }
@@ -57,7 +59,7 @@ public class TipoService {
     // Valida se a categoria existe
     private void validarCategoria(Categoria categoria) {
         if (categoria == null || categoriaService.buscarCategoriaPorId(categoria.getId()) == null) {
-            throw new RuntimeException("Categoria inválida ou não encontrada.");
+            throw new CustomException(ErrorCode.INVALID_CATEGORY); // Erro específico para categoria inválida
         }
     }
 

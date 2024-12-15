@@ -2,8 +2,10 @@ package com.datamatch.controle_estoque.service;
 
 import com.datamatch.controle_estoque.dto.CategoriaDTO;
 import com.datamatch.controle_estoque.dto.CategoriaResponseDTO;
+import com.datamatch.controle_estoque.exception.custom.CustomException;
 import com.datamatch.controle_estoque.model.Categoria;
 import com.datamatch.controle_estoque.repository.CategoriaRepository;
+import com.datamatch.controle_estoque.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ public class CategoriaService {
     // Método para buscar categoria por ID
     public Categoria buscarCategoriaPorId(Long id) {
         Optional<Categoria> categoria = categoriaRepository.findById(id);
-        return categoria.orElseThrow(() -> new RuntimeException("Categoria não encontrada."));
+        return categoria.orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)); // Usando o erro específico de categoria não encontrada
     }
 
     // Método para salvar uma categoria
@@ -35,7 +37,7 @@ public class CategoriaService {
     // Método para atualizar uma categoria
     public Categoria atualizarCategoria(Long id, Categoria categoria) {
         if (!categoriaRepository.existsById(id)) {
-            throw new RuntimeException("Categoria não encontrada para atualização.");
+            throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND); // Erro específico quando a categoria não for encontrada
         }
         categoria.setId(id); // Certifique-se de que o ID está correto
         return categoriaRepository.save(categoria);
@@ -44,7 +46,7 @@ public class CategoriaService {
     // Método para excluir uma categoria
     public void excluirCategoria(Long id) {
         if (!categoriaRepository.existsById(id)) {
-            throw new RuntimeException("Categoria não encontrada para exclusão.");
+            throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND); // Erro específico quando a categoria não for encontrada
         }
         categoriaRepository.deleteById(id);
     }
