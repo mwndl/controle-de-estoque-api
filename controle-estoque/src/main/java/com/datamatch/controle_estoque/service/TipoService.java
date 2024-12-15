@@ -1,5 +1,8 @@
 package com.datamatch.controle_estoque.service;
 
+import com.datamatch.controle_estoque.dto.TipoDTO;
+import com.datamatch.controle_estoque.dto.TipoResponseDTO;
+import com.datamatch.controle_estoque.model.Categoria;
 import com.datamatch.controle_estoque.model.Tipo;
 import com.datamatch.controle_estoque.repository.TipoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,37 +27,64 @@ public class TipoService {
 
     // Método para buscar tipo por ID
     public Tipo buscarTipoPorId(Long id) {
-        return tipoRepository.findById(id).orElse(null);
+        return tipoRepository.findById(id).orElseThrow(() -> new RuntimeException("Tipo não encontrado."));
     }
-
 
     // Método para salvar um tipo
     public Tipo salvarTipo(Tipo tipo) {
-        // Verifica se a categoria associada ao tipo é válida
-        if (tipo.getCategoria() == null || categoriaService.buscarCategoriaPorId(tipo.getCategoria().getId()) == null) {
-            throw new RuntimeException("Categoria inválida ou não encontrada");
-        }
-
+        validarCategoria(tipo.getCategoria());
         return tipoRepository.save(tipo);
     }
 
     // Método para atualizar um tipo
     public Tipo atualizarTipo(Long id, Tipo tipo) {
-        if (tipoRepository.existsById(id)) {
-            tipo.setId(id);  // Certifique-se de que o tipo tenha o ID correto
-
-            // Verifica se a categoria associada ao tipo é válida
-            if (tipo.getCategoria() == null || categoriaService.buscarCategoriaPorId(tipo.getCategoria().getId()) == null) {
-                throw new RuntimeException("Categoria inválida ou não encontrada");
-            }
-
-            return tipoRepository.save(tipo);
+        if (!tipoRepository.existsById(id)) {
+            throw new RuntimeException("Tipo não encontrado para atualização.");
         }
-        return null;  // Caso o tipo não seja encontrado, retornamos null
+        validarCategoria(tipo.getCategoria());
+        tipo.setId(id); // Certifique-se de que o ID está correto
+        return tipoRepository.save(tipo);
     }
 
     // Método para excluir um tipo
     public void excluirTipo(Long id) {
+        if (!tipoRepository.existsById(id)) {
+            throw new RuntimeException("Tipo não encontrado para exclusão.");
+        }
         tipoRepository.deleteById(id);
+    }
+
+    // Valida se a categoria existe
+    private void validarCategoria(Categoria categoria) {
+        if (categoria == null || categoriaService.buscarCategoriaPorId(categoria.getId()) == null) {
+            throw new RuntimeException("Categoria inválida ou não encontrada.");
+        }
+    }
+
+    // Conversão de Tipo para TipoResponseDTO
+    public TipoResponseDTO toResponseDTO(Tipo tipo) {
+        TipoResponseDTO dto = new TipoResponseDTO();
+        dto.setId(tipo.getId());
+        dto.setNome(tipo.getNome());
+        dto.setDescricao(tipo.getDescricao());
+
+        TipoResponseDTO.CategoriaResumoDTO categoriaResumoDTO = new TipoResponseDTO.CategoriaResumoDTO();
+        categoriaResumoDTO.setId(tipo.getCategoria().getId());
+        categoriaResumoDTO.setNome(tipo.getCategoria().getNome());
+        dto.setCategoria(categoriaResumoDTO);
+
+        return dto;
+    }
+
+    // Conversão de TipoDTO para Tipo
+    public Tipo toEntity(TipoDTO tipoDTO) {
+        Tipo tipo = new Tipo();
+        tipo.setNome(tipoDTO.getNome());
+        tipo.setDescricao(tipoDTO.getDescricao());
+
+        Categoria categoria = categoriaService.buscarCategoriaPorId(tipoDTO.getCategoriaId());
+        tipo.setCategoria(categoria);
+
+        return tipo;
     }
 }
